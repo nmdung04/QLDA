@@ -5,9 +5,11 @@ import styles from '../styles/Home.module.scss';
 import Ellipse from '../components/Ellipse/Ellipse';
 import Features from '../components/Features/Features';
 
+
 export default function FeaturesPage() {
   return (
     <div className={styles.container}>
+      
       <Head>
         <title>Features - KKCD AI Video Customer Service</title>
         <meta name="description" content="Features of KKCD - AI Video Customer Service and Satisfaction" />
