@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import styles from './ProjectList.module.scss';
 import Button from '../Button/Button';
 import ProjectItem from '../ProjectItem/ProjectItem';
@@ -7,29 +7,30 @@ import VideoDetail from '../VideoDetail/VideoDetail';
 
 const ProjectList = () => {
   // State để quản lý danh sách projects
-  const [projects, setProjects] = useState([
-    {
-      id: 1,
-      title: 'One Piece Egghead Part 2 | Official Trailer (English Subtitles)',
-      videoCount: 10,
-      dateModified: '22/03/2025 14:30',
-      thumbnail: '/placeholder.jpg'
-    },
-    {
-      id: 2,
-      title: 'One Piece Egghead Part 2 | Official Trailer (English Subtitles)',
-      videoCount: 1,
-      dateModified: '22/03/2025 14:31',
-      thumbnail: '/placeholder.jpg'
-    },
-    {
-      id: 3,
-      title: 'One Piece Egghead Part 2 | Official Trailer (English Subtitles)',
-      videoCount: 5,
-      dateModified: '22/03/2025 14:32',
-      thumbnail: '/placeholder.jpg'
+  const [projects, setProjects] = useState([]);
+  const [userId, setUserId] = useState(null);
+  // Lấy userId từ localStorage khi mount
+  useEffect(() => {
+    const session = localStorage.getItem('userSession');
+    if (session) {
+      setUserId(session);
     }
-  ]);
+  }, []);
+
+  // Fetch projects của user khi userId thay đổi
+  useEffect(() => {
+    if (!userId) return;
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch(`/api/projects?userId=${userId}`);
+        const data = await res.json();
+        setProjects(data);
+      } catch (err) {
+        setProjects([]);
+      }
+    };
+    fetchProjects();
+  }, [userId]);
 
   // State để quản lý confirm form
   const [showConfirmForm, setShowConfirmForm] = useState(false);
@@ -53,9 +54,21 @@ const ProjectList = () => {
   };
 
   // Xử lý khi xác nhận xóa project
-  const handleConfirmDelete = () => {
+  const handleConfirmDelete = async () => {
     if (projectToDelete) {
-      setProjects(projects.filter(project => project.id !== projectToDelete));
+      try {
+        const res = await fetch(`/api/projects?id=${projectToDelete}`, {
+          method: 'DELETE',
+        });
+        if (res.ok) {
+          setProjects(projects.filter(project => (project._id || project.id) !== projectToDelete));
+        } else {
+          const data = await res.json();
+          alert(data.error || 'Delete failed');
+        }
+      } catch (err) {
+        alert('Delete failed');
+      }
       setShowConfirmForm(false);
       setProjectToDelete(null);
     }
@@ -78,19 +91,33 @@ const ProjectList = () => {
   };
 
   // Xử lý khi click vào một project
+  const formatDateTime = (date) => {
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return date;
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const year = d.getFullYear();
+    const hour = String(d.getHours()).padStart(2, '0');
+    const minute = String(d.getMinutes()).padStart(2, '0');
+    return `${day}/${month}/${year} ${hour}:${minute}`;
+  };
+
   const handleProjectClick = (project) => {
-    // Tạo mock video data cho project đã có
-    const mockVideo = {
-      id: 1,
+    // Hiển thị video với clip_url nếu có, format lại dateModified
+    const videoData = {
+      id: project._id || project.id,
       title: project.title,
+      url: project.url,
       thumbnail: project.thumbnail,
       status: 'Available',
-      clips: project.videoCount,
-      dateModified: project.dateModified,
-      generatedClips: []
+      statusExtract: project.status || 'created',
+      clips: project.videoCount || (project.clips ? project.clips.length : 0),
+      dateModified: formatDateTime(project.dateModified),
+      generatedClips: project.clips || [],
+      clip_url: project.clips && project.clips.length > 0 ? project.clips[0] : '',
     };
-    setVideoData(mockVideo);
-    setSelectedProject(project);
+    setVideoData(videoData);
+    setSelectedProject({ ...project, dateModified: formatDateTime(project.dateModified) });
   };
 
   // Quay lại danh sách projects
@@ -114,6 +141,7 @@ const ProjectList = () => {
     setLoading(true);
 
     try {
+      // Lấy metadata video từ YouTube
       const response = await fetch('/api/youtube/info', {
         method: 'POST',
         headers: {
@@ -128,33 +156,47 @@ const ProjectList = () => {
         throw new Error(data.error || 'Không thể lấy thông tin video');
       }
 
-      // Tạo project mới với thông tin video
-      const newProject = {
-        id: Date.now(),
-        title: data.title,
-        videoCount: 1,
-        dateModified: new Date().toLocaleDateString('en-GB') + ' ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
-        thumbnail: data.thumbnail
-      };
-      
-      // Thêm project vào danh sách
-      setProjects([...projects, newProject]);
-      
+      // Format date to dd/MM/yyyy HH:mm
+      const formattedDate = formatDateTime(new Date());
+
+      // Gửi thông tin project lên database
+      const projectRes = await fetch('/api/projects', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId,
+          title: data.title,
+          videoCount: 1,
+          url: youtubeUrl,
+          dateModified: formattedDate,
+          thumbnail: data.thumbnail,
+          clips: [],
+          status: 'created',
+        }),
+      });
+      const savedProject = await projectRes.json();
+      if (!projectRes.ok) throw new Error(savedProject.error || 'Không thể lưu project');
+
+      // Cập nhật danh sách project
+      setProjects((prev) => [...prev, { ...savedProject, dateModified: formattedDate }]);
+
       // Tạo video data để hiển thị trong VideoDetail
       const videoDetailData = {
-        id: 1,
+        id: savedProject._id,
         title: data.title,
+        url: youtubeUrl,
         thumbnail: data.thumbnail,
         status: 'Available',
+        statusExtract: 'created',
         clips: 0,
-        dateModified: newProject.dateModified,
+        dateModified: formattedDate,
         generatedClips: [],
-        author: data.author || 'Unknown'
+        author: data.author || 'Unknown',
+        clip_url: savedProject.clips[0] || '',
       };
-      
-      // Chuyển sang VideoDetail
+
       setVideoData(videoDetailData);
-      setSelectedProject(newProject);
+      setSelectedProject({ ...savedProject, dateModified: formattedDate });
       setIsCreatingNewProject(false);
     } catch (error) {
       console.error('Error fetching video info:', error);
@@ -254,11 +296,11 @@ const ProjectList = () => {
         <div className={styles.tableBody}>
           {projects.map(project => (
             <ProjectItem 
-              key={project.id}
-              project={project}
+              key={project._id || project.id}
+              project={{ ...project, dateModified: formatDateTime(project.dateModified) }}
               onDeleteClick={(e) => {
                 e.stopPropagation();
-                handleDeleteClick(project.id);
+                handleDeleteClick(project._id || project.id);
               }}
               onClick={() => handleProjectClick(project)}
             />

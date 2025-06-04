@@ -59,9 +59,13 @@ const SignIn = ({ onClose, onToggleForm }) => {
         });
         const data = await res.json();
         if (res.ok) {
-          // Đăng nhập thành công, xử lý lưu user/session ở đây
-          alert('Login successful!');
+          // Đăng nhập thành công, lưu session vào localStorage
+          localStorage.setItem('userSession', data.user._id);
           onClose && onClose();
+          // Thông báo cho các component khác biết đã đăng nhập
+          window.dispatchEvent(new Event('userSessionChanged'));
+          // Điều hướng về trang home
+          window.location.href = '/';
         } else {
           setErrors({ ...errors, password: data.error || 'Login failed' });
         }

@@ -7,10 +7,18 @@ const ProjectItem = ({ project, onDeleteClick, onClick }) => {
       <div className={styles.projectColumn}>
         <div className={styles.projectInfo}>
           <div className={styles.thumbnailContainer}>
-            {/* Placeholder cho ảnh thumbnail */}
-            <div className={styles.thumbnail}>
-              <span>OP</span>
-            </div>
+            {project.thumbnail ? (
+              <img
+                className={styles.thumbnail}
+                src={project.thumbnail}
+                alt={project.title}
+                style={{ objectFit: 'cover', width: '120px', height: '80px' }}
+              />
+            ) : (
+              <div className={styles.thumbnail}>
+                <span>OP</span>
+              </div>
+            )}
           </div>
           <div className={styles.title}>{project.title}</div>
         </div>
