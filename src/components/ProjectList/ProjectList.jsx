@@ -3,7 +3,7 @@ import styles from './ProjectList.module.scss';
 import Button from '../Button/Button';
 import ProjectItem from '../ProjectItem/ProjectItem';
 import ConfirmForm from '../ConfirmForm/ConfirmForm';
-import VideoList from '../VideoList/VideoList';
+import VideoDetail from '../VideoDetail/VideoDetail';
 
 const ProjectList = () => {
   // State để quản lý danh sách projects
@@ -41,6 +41,10 @@ const ProjectList = () => {
   // State để quản lý project mới đang được tạo
   const [isCreatingNewProject, setIsCreatingNewProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
+  const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [videoData, setVideoData] = useState(null);
 
   // Xử lý khi nhấn nút xóa project
   const handleDeleteClick = (projectId) => {
@@ -63,16 +67,29 @@ const ProjectList = () => {
     setProjectToDelete(null);
   };
 
-  // Xử lý khi nhấn nút New Project - thay đổi logic ở đây
+  // Xử lý khi nhấn nút New Project
   const handleNewProjectClick = () => {
-    // Tạo project mới với tên mặc định
     const defaultName = `New Project ${projects.length + 1}`;
     setNewProjectName(defaultName);
     setIsCreatingNewProject(true);
+    setYoutubeUrl('');
+    setError('');
+    setVideoData(null);
   };
 
   // Xử lý khi click vào một project
   const handleProjectClick = (project) => {
+    // Tạo mock video data cho project đã có
+    const mockVideo = {
+      id: 1,
+      title: project.title,
+      thumbnail: project.thumbnail,
+      status: 'Available',
+      clips: project.videoCount,
+      dateModified: project.dateModified,
+      generatedClips: []
+    };
+    setVideoData(mockVideo);
     setSelectedProject(project);
   };
 
@@ -81,45 +98,138 @@ const ProjectList = () => {
     setSelectedProject(null);
     setIsCreatingNewProject(false);
     setNewProjectName('');
+    setYoutubeUrl('');
+    setError('');
+    setVideoData(null);
   };
 
-  // Xử lý khi thêm video vào project mới
-  const handleAddVideoToNewProject = (videoData) => {
-    // Tạo project mới với video đầu tiên
-    const newProject = {
-      id: Date.now(),
-      title: newProjectName,
-      videoCount: 1,
-      dateModified: new Date().toLocaleDateString('en-GB') + ' ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
-      thumbnail: '/placeholder.jpg'
-    };
-    
-    // Thêm project vào danh sách
-    setProjects([...projects, newProject]);
-    
-    // Chuyển sang chế độ xem project với video đã thêm
-    setSelectedProject(newProject);
+  // Xử lý khi fetch thông tin video từ YouTube
+  const handleFetchVideoInfo = async () => {
+    if (!youtubeUrl.trim()) {
+      setError('Vui lòng nhập URL YouTube');
+      return;
+    }
+
+    setError('');
+    setLoading(true);
+
+    try {
+      const response = await fetch('/api/youtube/info', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: youtubeUrl }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Không thể lấy thông tin video');
+      }
+
+      // Tạo project mới với thông tin video
+      const newProject = {
+        id: Date.now(),
+        title: data.title,
+        videoCount: 1,
+        dateModified: new Date().toLocaleDateString('en-GB') + ' ' + new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+        thumbnail: data.thumbnail
+      };
+      
+      // Thêm project vào danh sách
+      setProjects([...projects, newProject]);
+      
+      // Tạo video data để hiển thị trong VideoDetail
+      const videoDetailData = {
+        id: 1,
+        title: data.title,
+        thumbnail: data.thumbnail,
+        status: 'Available',
+        clips: 0,
+        dateModified: newProject.dateModified,
+        generatedClips: [],
+        author: data.author || 'Unknown'
+      };
+      
+      // Chuyển sang VideoDetail
+      setVideoData(videoDetailData);
+      setSelectedProject(newProject);
+      setIsCreatingNewProject(false);
+    } catch (error) {
+      console.error('Error fetching video info:', error);
+      setError(error.message || 'Không thể lấy thông tin video');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Xử lý khi hủy tạo project mới
+  const handleCancelNewProject = () => {
     setIsCreatingNewProject(false);
+    setNewProjectName('');
+    setYoutubeUrl('');
+    setError('');
   };
 
-  // Nếu đang tạo project mới
+  // Form tạo project mới
   if (isCreatingNewProject) {
     return (
-      <VideoList 
-        projectName={newProjectName}
-        isNewProject={true}
-        onBackToProjects={handleBackToProjects}
-        onAddFirstVideo={handleAddVideoToNewProject}
-      />
+      <section className={styles.projectList}>
+        <div className={styles.header}>
+          <button className={styles.backButton} onClick={handleCancelNewProject}>
+            ← Back to Projects
+          </button>
+          <h1>New Project</h1>
+        </div>
+
+        <div className={styles.newProjectForm}>
+          <div className={styles.formGroup}>
+            <label>Project Name:</label>
+            <input 
+              type="text" 
+              value={newProjectName}
+              onChange={(e) => setNewProjectName(e.target.value)}
+              className={styles.input}
+            />
+          </div>
+          
+          <div className={styles.formGroup}>
+            <label>YouTube URL:</label>
+            <div className={styles.urlInputGroup}>
+              <input 
+                type="text" 
+                placeholder="Paste YouTube video URL here"
+                value={youtubeUrl}
+                onChange={(e) => setYoutubeUrl(e.target.value)}
+                className={styles.input}
+                disabled={loading}
+              />
+              <Button 
+                variant="primary" 
+                onClick={handleFetchVideoInfo}
+                disabled={loading || !youtubeUrl.trim()}
+              >
+                {loading ? 'Loading...' : 'Add Video'}
+              </Button>
+            </div>
+          </div>
+          
+          {error && <div className={styles.error}>{error}</div>}
+        </div>
+      </section>
     );
   }
 
   // Nếu đang xem chi tiết project
-  if (selectedProject) {
+  if (selectedProject && videoData) {
     return (
-      <VideoList 
-        projectName={selectedProject.title} 
-        onBackToProjects={handleBackToProjects}
+      <VideoDetail 
+        video={videoData}
+        onBack={handleBackToProjects}
+        onExtract={(video) => {
+          console.log('Extracting clips from:', video.title);
+        }}
       />
     );
   }
