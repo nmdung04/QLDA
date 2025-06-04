@@ -13,9 +13,7 @@ const Hero = () => {
           Utilizing AI to personalize, enhance, and optimize your experience,
           ensuring seamless, efficient, and smooth interactions throughout.
         </p>
-        <button className={styles.ctaButton}>
-          <span className={styles.arrow}>←</span> GET STARTED <span className={styles.arrow}>→</span>
-        </button>
+
       </div>
     </section>
   );

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Button from '../Button/Button';
 import SignIn from '../SignIn/SignIn';
 import SignUp from '../SignUp/SignUp';
@@ -11,6 +11,21 @@ import logo from '../../../public/assets/logo/logo.png';
 const Header = () => {
   const [showSignIn, setShowSignIn] = useState(false);
   const [showSignUp, setShowSignUp] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setIsLoggedIn(!!localStorage.getItem('userSession'));
+    const handler = () => setIsLoggedIn(!!localStorage.getItem('userSession'));
+    window.addEventListener('userSessionChanged', handler);
+    return () => window.removeEventListener('userSessionChanged', handler);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('userSession');
+    setIsLoggedIn(false);
+    window.dispatchEvent(new Event('userSessionChanged'));
+    window.location.href = '/';
+  };
 
   const handleSignInClick = () => {
     setShowSignIn(true);
@@ -50,17 +65,38 @@ const Header = () => {
           <ul>
             <li><Link href="/features"><span>Features</span></Link></li>
             <li><Link href="/about"><span>About</span></Link></li>
-            <li><Link href="/projects"><span>Projects</span></Link></li>
+            <li>
+              <a
+                href={isLoggedIn ? "/projects" : "#"}
+                onClick={e => {
+                  if (!isLoggedIn) {
+                    e.preventDefault();
+                    setShowSignIn(true);
+                    setShowSignUp(false);
+                  }
+                }}
+              >
+                <span>Projects</span>
+              </a>
+            </li>
           </ul>
         </nav>
         
         <div className={styles.auth}>
-          <Button onClick={handleSignInClick} variant='other'>
-            <span className={styles.signIn}>Sign in</span>
-          </Button>
-          <Button onClick={handleSignUpClick} variant='secondary'>
-            <span className={styles.signUp}>Sign up</span>
-          </Button>
+          {isLoggedIn ? (
+            <Button onClick={handleLogout} variant='other'>
+              <span className={styles.signIn}>Logout</span>
+            </Button>
+          ) : (
+            <>
+              <Button onClick={handleSignInClick} variant='other'>
+                <span className={styles.signIn}>Sign in</span>
+              </Button>
+              <Button onClick={handleSignUpClick} variant='secondary'>
+                <span className={styles.signUp}>Sign up</span>
+              </Button>
+            </>
+          )}
         </div>
       </header>
 
