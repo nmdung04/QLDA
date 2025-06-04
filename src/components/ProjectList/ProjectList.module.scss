@@ -2,7 +2,7 @@
   width: 100%;
   max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 1rem 2rem;
 }
 
 .header {
@@ -44,7 +44,7 @@
 }
 
 .tableBody {
-  max-height: 600px;
+  max-height: 400px;
   overflow-y: auto;
   
   &::-webkit-scrollbar {

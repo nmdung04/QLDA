@@ -90,7 +90,6 @@ const SignUp = ({ onClose, onToggleForm }) => {
           // Sau khi đăng ký thành công, cập nhật tên người dùng vào DB
           // (nếu API chưa hỗ trợ fullName, có thể cập nhật ở đây)
           // Hoặc show thông báo thành công
-          alert('Registration successful! You can now sign in.');
           onToggleForm && onToggleForm();
         } else {
           // Hiển thị lỗi trả về từ API
