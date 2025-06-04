@@ -1,4 +1,4 @@
-import clientPromise from '../../db';
+import clientPromise from '../../../utils/db';
 import bcrypt from 'bcryptjs';
 
 export default async function handler(req, res) {
