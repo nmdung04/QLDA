@@ -8,6 +8,7 @@ import About from '../components/About/About';
 export default function AboutPage() {
   return (
     <div className={styles.container}>
+      <SplashCursor/>
       <Head>
         <title>About - KKCD AI Video Customer Service</title>
         <meta name="description" content="About KKCD - AI Video Customer Service and Satisfaction" />

@@ -4,11 +4,12 @@ import Header from '../components/Header/Header';
 import Hero from '../components/Hero/Hero';
 import styles from '../styles/Home.module.scss';
 import Ellipse from '../components/Ellipse/Ellipse';
+import SplashCursor from '@/components/SplashCursor/SplashCursor';
 
 export default function Home() {
   return (
     <div className={styles.container}>
-      
+      <SplashCursor/>
       <Head>
         <title>KKCD - AI Video Customer Service</title>
         <meta name="description" content="AI Video Customer Service and Satisfaction" />
