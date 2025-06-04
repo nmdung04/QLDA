@@ -1,0 +1,22 @@
+@import url('./globals.scss');
+
+.container {
+  max-height: 99vh;
+  background: rgba(7, 3, 22, 1);
+  position: relative;
+  overflow: hidden;
+  scrollbar-color: var(--primary-color);
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  z-index: 1;
+  position: relative;
+  overflow: hidden;
+  scrollbar-color: var(--primary-color);
+}
+.ellipse{
+  width: 100%;
+}

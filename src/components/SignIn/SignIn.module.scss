@@ -1,0 +1,183 @@
+.signInContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.formWrapper {
+  position: relative;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 450px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  
+  .closeButton {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    transition: color 0.3s ease;
+    
+    &:hover {
+      color: white;
+    }
+  }
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: white;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  
+  label {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.8);
+  }
+  
+  input {
+    padding: 0.8rem 1rem;
+    border-radius: 4px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background-color: rgba(255, 255, 255, 0.05);
+    color: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    
+    &:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(97, 29, 208, 0.3);
+    }
+  }
+}
+
+.errorInput {
+  border-color: #ff3b30 !important;
+}
+
+.errorMessage {
+  color: #ff3b30;
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.forgotPassword {
+  text-align: right;
+  
+  a {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: color 0.3s ease;
+    
+    &:hover {
+      color: var(--primary-color);
+      text-decoration: underline;
+    }
+  }
+}
+
+.submitButton {
+  margin-top: 1rem;
+  
+  button {
+    width: 100%;
+    padding: 0.8rem !important;
+    font-size: 1rem;
+  }
+}
+
+.signUpLink {
+  margin-top: 1.5rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  
+  a {
+    color: var(--primary-color);
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+
+/* Thêm các style này vào file SignIn.module.scss hiện có */
+
+.googleButton,
+.googleButtonBottom {
+  width: 100%;
+  margin-bottom: 15px;
+  
+  button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.googleButtonBottom {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.googleIcon {
+  background-color: white;
+  color: #4285F4;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 10px;
+  font-weight: bold;
+}
+
+.orDivider {
+  display: flex;
+  align-items: center;
+  text-align: center;
+  margin: 15px 0;
+  
+  &:before,
+  &:after {
+    content: '';
+    flex: 1;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+  
+  span {
+    margin: 0 10px;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 14px;
+  }
+}

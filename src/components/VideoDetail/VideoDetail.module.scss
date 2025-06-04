@@ -1,0 +1,134 @@
+.videoDetail {
+  max-height: 90vh;
+  color: white;
+  padding: 2rem 4rem;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.backButton {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+.pageTitle {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.content {
+  display: grid;
+  grid-template-columns: 500px 1fr;
+  gap: 32px;
+  height: 70vh;
+}
+
+.leftPanel {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 24px;
+  backdrop-filter: blur(10px);
+}
+
+.videoInfo {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.thumbnailContainer {
+  width: 100%;
+  aspect-ratio: 16/9;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 16px;
+}
+
+.thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.videoMeta {
+  flex: 1;
+  margin-bottom: 24px;
+}
+
+.videoTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 12px 0;
+  line-height: 1.4;
+}
+
+.videoStats {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.status {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  
+  &.available {
+    background: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+  }
+  
+  &.pending {
+    background: rgba(241, 196, 15, 0.2);
+    color: #f1c40f;
+  }
+}
+
+.extractButton {
+  width: 100%;
+  font-size: 16px;
+  font-weight: 600;
+  padding: 12px;
+}
+
+.rightPanel {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 24px;
+  backdrop-filter: blur(10px);
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .leftPanel {
+    order: 1;
+  }
+  
+  .rightPanel {
+    order: 2;
+  }
+}

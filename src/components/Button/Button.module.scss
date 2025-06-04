@@ -1,0 +1,31 @@
+.button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 0.75em;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  padding: 12px 24px;
+  line-height: 100%;
+  text-wrap: nowrap;
+}
+
+.primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.secondary {
+  background-color:  transparent;
+  color: var(--primary-color);
+  border: 1px solid  var(--primary-color);
+}
+.logout{
+  background-color:  transparent;
+  color: #333;
+  border: 1px solid  var(--primary-color);
+}
+.other {
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+}

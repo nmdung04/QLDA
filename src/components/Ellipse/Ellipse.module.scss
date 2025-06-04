@@ -1,0 +1,11 @@
+.ellipse {
+    width: 50%;
+    right: 10vw;
+    position: absolute;
+    filter: blur(180px);
+    border-radius: 50%;
+    background-color: var(--violet-color);
+    height: 30vw;
+    z-index: 0;
+}
+

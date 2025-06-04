@@ -1,0 +1,54 @@
+.logOut {
+    position: absolute;
+    top: calc(50% - 12px);
+    left: 36px;
+    letter-spacing: 0.02em;
+    line-height: 22.52px;
+}
+.vectorIcon {
+    position: absolute;
+    height: 35.71%;
+    width: 15.87%;
+    top: 32.14%;
+    right: 77.78%;
+    bottom: 32.14%;
+    left: 6.35%;
+    max-width: 100%;
+    overflow: hidden;
+    max-height: 100%;
+}
+.button {
+    position: absolute;
+    height: 100%;
+    width: 69.23%;
+    top: 0%;
+    right: 0%;
+    bottom: 0%;
+    left: 30.77%;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 16px;
+    overflow: hidden;
+}
+.vectorIcon1 {
+    position: absolute;
+    height: 71.43%;
+    width: 21.98%;
+    top: 14.29%;
+    right: 78.02%;
+    bottom: 14.29%;
+    left: 0%;
+    max-width: 100%;
+    overflow: hidden;
+    max-height: 100%;
+}
+.logout {
+    width: 100%;
+    position: relative;
+    height: 56px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 20px;
+    color: var(--color-white);
+    font-family: var(--font-inter);
+}
+

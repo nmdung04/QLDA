@@ -1,0 +1,103 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2.5rem 2rem 1rem;
+  width: 100%;
+  position: relative;
+  z-index: 10;
+}
+
+.logo {
+  a {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+  }
+  
+  .logoText {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: white;
+  }
+}
+
+.nav {
+  ul {
+    display: flex;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    
+    li {
+      margin: 0 1.5rem;
+      
+      a {
+        color: white;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: opacity 0.3s ease;
+        
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+  }
+}
+
+.auth {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  a {
+    text-decoration: none;
+    font-size: 1rem;
+    margin-left: 1rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: all 0.3s ease;
+  }
+  
+  .signIn {
+    color: rgb(0, 0, 0);
+    font-weight: 500;
+  }
+  
+  .signUp {
+    background-color: transparent;
+    color: var(--primary-color);
+  }
+}
+
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+.modalContent {
+  width: 100%;
+  max-width: 500px;
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
