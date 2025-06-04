@@ -145,3 +145,20 @@
   border-radius: 8px;
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
 }
+
+.successMsg {
+  font-size: 1.2rem;
+  color: #2ecc71;
+  padding: 20px;
+  text-align: center;
+}
+
+.orbloading{
+  width: 50%;
+  height:50%;
+  position: relative;
+  margin: 0 auto;
+  border-radius: 50%;
+  top: 50%;
+  transform: translateY(-50%);
+}

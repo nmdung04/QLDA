@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import styles from './VideoDetail.module.scss';
 import Button from '../Button/Button';
-import ClipList from '../ClipList/ClipList';
+import Orb from '../Orb/Orb';
 
 const VideoDetail = ({ video, onBack, onExtract }) => {
   const [loading, setLoading] = useState(false);
@@ -124,17 +124,31 @@ function formatDateTime(dateString) {
               </Button>
             )}
             {status === 'processing' && (
-              <div className={styles.loading}>⏳ Đang extract video...</div>
+              <Button 
+              variant="disable" 
+              onClick={handleExtractClick}
+              className={styles.disableButton}
+            >
+               Extract
+            </Button>
             )}
             {status === 'success' && (
-              <div className={styles.successMsg}>✅ Extract thành công!</div>
+              <div className={styles.successMsg}> &#10003; Extracted</div>
             )}
           </div>
         </div>
 
         <div className={styles.rightPanel}>
           {status === 'processing' ? (
-            <div className={styles.loading}>⏳ Processing...</div>
+            // <div className={styles.loading}>⏳ Processing...</div>
+            <div className={styles.orbloading}>
+              <Orb
+                hoverIntensity={0}
+                rotateOnHover={true}
+                hue={0}
+                forceHoverState={false}
+              />
+            </div>
           ) : status === 'success' ? (
             <video
               className={styles.resultVideo}

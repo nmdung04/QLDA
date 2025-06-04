@@ -4,10 +4,7 @@ import Button from '../Button/Button';
 import SignIn from '../SignIn/SignIn';
 import SignUp from '../SignUp/SignUp';
 import { useRouter } from 'next/router';
-import SignIn from '../SignIn/SignIn';
-import Header from '../Header/Header';
-import { useState, useEffect } from 'react';
-import SignUp from '../SignUp/SignUp';
+
 const Features = () => {
   const router = useRouter();
   const [showSignIn, setShowSignIn] = useState(false);
@@ -32,13 +29,6 @@ const Features = () => {
       setShowSignIn(true);
     }
   };
-  const handleClose = () => {
-    // Logic to close the feature section or modal  
-  }
-  const handleToggle= () => {
-    // Logic to close the feature section or modal  
-  }
-  
 
   return (
     <section className={styles.features}>
