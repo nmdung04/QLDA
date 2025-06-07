@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 import { Renderer, Program, Mesh, Triangle, Vec3 } from "ogl";
 
-import "./Orb.scss";
+import styles from "./Orb.module.scss";
 
 export default function Orb({
   hue = 0,
@@ -282,5 +282,9 @@ export default function Orb({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hue, hoverIntensity, rotateOnHover, forceHoverState]);
 
-  return <div ref={ctnDom} className="orb-container" />;
+  return (
+    <div ref={ctnDom} className={styles.orb}>
+      <div ref={ctnDom} className="orb-container" />;
+    </div>
+  );
 }
