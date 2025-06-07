@@ -1,8 +1,14 @@
-import '../styles/globals.scss';
-import '../components/Orb/Orb.module.scss'; // Thêm dòng này
+import { SessionProvider } from 'next-auth/react'
+import '../styles/globals.scss'
 
-function MyApp({ Component, pageProps }) {
-  return <Component {...pageProps} />;
+export default function App({
+  Component,
+  pageProps: { session, ...pageProps },
+}) {
+  return (
+    <SessionProvider session={session}>
+      <Component {...pageProps} />
+    </SessionProvider>
+  )
 }
-
-export default MyApp;
+import '../components/Orb/Orb.module.scss'; // Thêm dòng này

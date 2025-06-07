@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { signIn, getSession } from 'next-auth/react';
 import Button from '../Button/Button';
 import styles from './SignIn.module.scss';
 import GoogleButton from '../GoogleButton/GoogleButton';
@@ -13,6 +14,8 @@ const SignIn = ({ onClose, onToggleForm }) => {
     email: '',
     password: ''
   });
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -51,6 +54,7 @@ const SignIn = ({ onClose, onToggleForm }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
+      setIsLoading(true);
       try {
         const res = await fetch('/api/auth/login', {
           method: 'POST',
@@ -59,25 +63,51 @@ const SignIn = ({ onClose, onToggleForm }) => {
         });
         const data = await res.json();
         if (res.ok) {
-          // Đăng nhập thành công, lưu session vào localStorage
           localStorage.setItem('userSession', data.user._id);
           onClose && onClose();
-          // Thông báo cho các component khác biết đã đăng nhập
           window.dispatchEvent(new Event('userSessionChanged'));
-          // Điều hướng về trang home
           window.location.href = '/';
         } else {
           setErrors({ ...errors, password: data.error || 'Login failed' });
         }
       } catch (err) {
         setErrors({ ...errors, password: 'Server error' });
+      } finally {
+        setIsLoading(false);
       }
     }
   };
 
-  const handleGoogleLogin = () => {
-    console.log('Login with Google');
-    // Implement Google login logic here
+  const handleGoogleLogin = async () => {
+    setIsLoading(true);
+    try {
+      const result = await signIn('google', {
+        redirect: false,
+        callbackUrl: '/'
+      });
+      
+      if (result?.ok) {
+        // Đăng nhập thành công
+        const session = await getSession();
+        if (session) {
+          // Lưu session info vào localStorage để tương thích với code hiện tại
+          localStorage.setItem('userSession', session.user.email);
+          localStorage.setItem('userInfo', JSON.stringify(session.user));
+          
+          onClose && onClose();
+          window.dispatchEvent(new Event('userSessionChanged'));
+          window.location.href = '/';
+        }
+      } else if (result?.error) {
+        console.error('Google login error:', result.error);
+        setErrors({ ...errors, password: 'Google login failed. Please try again.' });
+      }
+    } catch (error) {
+      console.error('Google login error:', error);
+      setErrors({ ...errors, password: 'Google login failed. Please try again.' });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -87,8 +117,6 @@ const SignIn = ({ onClose, onToggleForm }) => {
           &times;
         </div>
         <h2 className={styles.title}>Sign In</h2>
-        
-        
         
         <form className={styles.form} onSubmit={handleSubmit}>
           <div className={styles.formGroup}>
@@ -100,6 +128,7 @@ const SignIn = ({ onClose, onToggleForm }) => {
               value={formData.email}
               onChange={handleChange}
               className={errors.email ? styles.errorInput : ''}
+              disabled={isLoading}
             />
             {errors.email && <span className={styles.errorMessage}>{errors.email}</span>}
           </div>
@@ -113,6 +142,7 @@ const SignIn = ({ onClose, onToggleForm }) => {
               value={formData.password}
               onChange={handleChange}
               className={errors.password ? styles.errorInput : ''}
+              disabled={isLoading}
             />
             {errors.password && <span className={styles.errorMessage}>{errors.password}</span>}
           </div>
@@ -122,16 +152,22 @@ const SignIn = ({ onClose, onToggleForm }) => {
           </div>
 
           <div className={styles.submitButton}>
-            <Button variant="primary" onClick={handleSubmit}>Sign In</Button>
+            <Button variant="primary" onClick={handleSubmit} disabled={isLoading}>
+              {isLoading ? 'Signing In...' : 'Sign In'}
+            </Button>
           </div>
           
-        <div className={styles.orDivider}>
-          <span>OR</span>
-        </div>
-      
-        <div className={styles.googleButtonBottom}>
-            <GoogleButton onClick={handleGoogleLogin} />
-        </div>
+          <div className={styles.orDivider}>
+            <span>OR</span>
+          </div>
+        
+          <div className={styles.googleButtonBottom}>
+            <GoogleButton 
+              onClick={handleGoogleLogin} 
+              text={isLoading ? 'Signing in...' : 'Sign in with Google'}
+            />
+          </div>
+          
           <div className={styles.signUpLink}>
             Don't have an account? <a href="#" onClick={(e) => {
                 e.preventDefault();
